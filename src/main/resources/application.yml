@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: moviender
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Moviender
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # Entity?lere göre tablo yoksa olu?turur, varsa sadece de?i?iklikleri uygular
+    show-sql: true     # hibernate taraf?ndan olu?turulan SQL komutlar?n?n konsola yaz?lmas?
+    properties:
+      hibernate:
+        format_sql: true # sorgunun konsolda daha okunakl? olmas?n? sa?lar
