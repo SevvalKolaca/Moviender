@@ -10,8 +10,6 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # Entity?lere g�re tablo yoksa olu?turur, varsa sadece de?i?iklikleri uygular
-    show-sql: true     # hibernate taraf?ndan olu?turulan SQL komutlar?n?n konsola yaz?lmas?
-    properties:
-      hibernate:
-        format_sql: true # sorgunun konsolda daha okunakl? olmas?n? sa?lar
+      ddl-auto: update  # Entity?lere g�re tablo yoksa olusturur, varsa sadece de?i?iklikleri uygular
+      show-sql: true      # hibernate taraf?ndan olusturulan SQL komutlar?n?n konsola yaz?lmas?
+      format_sql: true  # sorgunun konsolda daha okunaklı olmasını saglar
