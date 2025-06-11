@@ -1,16 +1,11 @@
-package user.model;
+package com.moviender.moviender.user.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-
+import jakarta.persistence.Id;
 import java.util.UUID;
 
 @AllArgsConstructor

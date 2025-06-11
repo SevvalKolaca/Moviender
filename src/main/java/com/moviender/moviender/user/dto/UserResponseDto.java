@@ -1,4 +1,4 @@
-package user.dto;
+package com.moviender.moviender.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class UserUpdateDto {
+public class UserResponseDto {
 
     private String username;
-    private String password;
     private String email;
     private Integer age;
+
 }

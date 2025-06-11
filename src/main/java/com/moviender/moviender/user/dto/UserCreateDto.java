@@ -1,4 +1,4 @@
-package user.dto;
+package com.moviender.moviender.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
