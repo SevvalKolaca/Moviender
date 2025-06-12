@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface UserService {
     UserResponseDto createUser(UserCreateDto createDto);
-    void updateUser(UUID id, UserUpdateDto updateDto);
+    void updateUser(UserUpdateDto updateDto);
 }

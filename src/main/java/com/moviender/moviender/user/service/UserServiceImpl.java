@@ -40,8 +40,25 @@ public class UserServiceImpl implements UserService{
         return userResponseDto;
     }
 
+    // TODO: Mevcut kullanıcı bilgisi jwt ile alınacak!!!
     @Override
-    public void updateUser(UUID id, UserUpdateDto updateDto) {
+    public void updateUser(UserUpdateDto updateDto) {
 
+        if(userRepository.existsByUsername(updateDto.getUsername()))
+        {
+            User user = userRepository.findByUsername(updateDto.getUsername());
+            if(updateDto.getUsername() != null)
+                user.setUsername(updateDto.getUsername());
+            if(updateDto.getPassword() != null)
+                user.setPassword(updateDto.getPassword());
+            if(updateDto.getEmail() != null)
+                user.setEmail(updateDto.getEmail());
+            if(updateDto.getAge() != null)
+                user.setAge(updateDto.getAge());
+
+            userRepository.save(user);
+        }
+        else
+            throw new RuntimeException("Username cannot be found!!!");
     }
 }

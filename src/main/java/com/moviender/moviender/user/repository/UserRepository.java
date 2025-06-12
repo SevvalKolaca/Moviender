@@ -5,7 +5,7 @@ import com.moviender.moviender.user.model.User;
 
 import java.util.UUID;
 
-public interface UserRepository<T> extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, UUID> {
     //User findById(UUID id);
     // zaten jpa içerisinde olduğundan tanımlamaya gerek yok
 
