@@ -1,6 +1,9 @@
 server:
   port: 8080
 
+tmdb:
+  api-key: 7d3c575703f680c059013f9eed65101d
+
 spring:
   application:
     name: moviender
