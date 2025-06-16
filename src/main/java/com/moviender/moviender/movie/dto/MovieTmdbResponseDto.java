@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 
 public class MovieTmdbResponseDto {
-    private List<MovieCreateDto> response;
+    private List<MovieCreateDto> results;
 }

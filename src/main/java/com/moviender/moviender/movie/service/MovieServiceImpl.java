@@ -4,6 +4,7 @@ import com.moviender.moviender.movie.dto.MovieCreateDto;
 import com.moviender.moviender.movie.dto.MovieTmdbResponseDto;
 import com.moviender.moviender.movie.model.Movie;
 import com.moviender.moviender.movie.repository.MovieRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,9 @@ public class MovieServiceImpl implements MovieService {
         System.out.println(apiKey);
     }
 
-    //@PostConstruct
+    @PostConstruct
     public MovieTmdbResponseDto getMovies(){
+        System.out.println(apiKey);
         String apiUrl = "https://api.themoviedb.org/3/movie/popular?api_key="+apiKey+"&language=en-US&page=1\n";
         RestTemplate restTemplate = new RestTemplate();
         MovieTmdbResponseDto result = restTemplate.getForObject(apiUrl, MovieTmdbResponseDto.class);
@@ -61,7 +63,7 @@ public class MovieServiceImpl implements MovieService {
 
     public void importMovies(){
         log.info("Import process started!");
-        List<MovieCreateDto> moviesDtos = getMovies().getResponse();
+        List<MovieCreateDto> moviesDtos = getMovies().getResults();
 
         if(moviesDtos == null || moviesDtos.isEmpty())
         {
