@@ -19,7 +19,10 @@ public class Movie {
     @Id
     Integer id;
 
+    @Column(length = 550)
     String title;
+
+    @Column(length = 550)
     String original_title;
 
     @Column(columnDefinition = "TEXT") // uzunluk sınırını kaldırmak icin

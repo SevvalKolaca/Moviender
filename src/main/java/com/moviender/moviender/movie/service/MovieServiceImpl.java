@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Value("${tmdb.api-key}")
     private String apiKey;
+    private Integer pageNumber = 3;
 
     // @PostConstruct --> metot çalışıyor mu diye kullandık, uygulama ayağa kalkarken direkt çalışsın diye.
     public void testKey(){
@@ -33,13 +35,18 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @PostConstruct
-    public MovieTmdbResponseDto getMovies(){
+    public List<MovieTmdbResponseDto> getMovies(){
+        List<MovieTmdbResponseDto> movies = new ArrayList<>();
         System.out.println(apiKey);
-        String apiUrl = "https://api.themoviedb.org/3/movie/popular?api_key="+apiKey+"&language=en-US&page=1\n";
-        RestTemplate restTemplate = new RestTemplate();
-        MovieTmdbResponseDto result = restTemplate.getForObject(apiUrl, MovieTmdbResponseDto.class);
-        System.out.println(result);
-        return result;
+        for(int page = 1; page <= pageNumber; page++){
+            String apiUrl = "https://api.themoviedb.org/3/movie/popular?api_key="+apiKey+"&language=en-US&page="+page;
+            RestTemplate restTemplate = new RestTemplate();
+            MovieTmdbResponseDto result = restTemplate.getForObject(apiUrl, MovieTmdbResponseDto.class);
+            System.out.println("Page " + page + ": " + result.getResults().size() + " movies fetched.");
+            movies.add(result);
+            //Thread.sleep(1000); // API rate limit'e takılmamak için
+        }
+        return movies;
     }
 
     public Movie convertToEntity(MovieCreateDto createDto) {
@@ -63,7 +70,18 @@ public class MovieServiceImpl implements MovieService {
 
     public void importMovies(){
         log.info("Import process started!");
-        List<MovieCreateDto> moviesDtos = getMovies().getResults();
+
+        List<MovieTmdbResponseDto> TmdbMovies = getMovies();
+        List<MovieCreateDto> moviesDtos = new ArrayList<>();
+
+        for(MovieTmdbResponseDto TmdbMovie : TmdbMovies){
+
+            if(TmdbMovie.getResults() == null)
+                throw new RuntimeException("Movie not found!");
+            else{
+                moviesDtos.addAll(TmdbMovie.getResults());
+            }
+        }
 
         if(moviesDtos == null || moviesDtos.isEmpty())
         {
