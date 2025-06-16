@@ -1,9 +1,13 @@
 package com.moviender.moviender.movieAndGenre.service;
 
+import com.moviender.moviender.movieAndGenre.dto.GenreTmdbResponseDto;
 import com.moviender.moviender.movieAndGenre.dto.MovieCreateDto;
 import com.moviender.moviender.movieAndGenre.dto.MovieTmdbResponseDto;
+import com.moviender.moviender.movieAndGenre.model.Genre;
 import com.moviender.moviender.movieAndGenre.model.Movie;
+import com.moviender.moviender.movieAndGenre.repository.GenreRepository;
 import com.moviender.moviender.movieAndGenre.repository.MovieRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -19,9 +24,11 @@ import java.util.stream.Collectors;
 public class MovieServiceImpl implements MovieService {
 
     private final MovieRepository movieRepository;
+    private final GenreRepository genreRepository;
 
-    public MovieServiceImpl(MovieRepository movieRepository){
+    public MovieServiceImpl(MovieRepository movieRepository, GenreRepository genreRepository){
         this.movieRepository = movieRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Value("${tmdb.api-key}")
@@ -36,7 +43,7 @@ public class MovieServiceImpl implements MovieService {
     //@PostConstruct --> For testing ;)
     public List<MovieTmdbResponseDto> getMovies(){
         List<MovieTmdbResponseDto> movies = new ArrayList<>();
-        System.out.println(apiKey);
+        //System.out.println(apiKey);
         for(int page = 1; page <= pageNumber; page++){
             String apiUrl = "https://api.themoviedb.org/3/movie/popular?api_key="+apiKey+"&language=en-US&page="+page;
             RestTemplate restTemplate = new RestTemplate();
@@ -52,9 +59,22 @@ public class MovieServiceImpl implements MovieService {
         return movies;
     }
 
+    public GenreTmdbResponseDto getGenres(){
 
+        String genreApiUrl = "https://api.themoviedb.org/3/genre/movie/list?api_key="+apiKey+"&language=en";
+        RestTemplate restTemplate = new RestTemplate();
 
-    public Movie convertToEntity(MovieCreateDto createDto) {
+        GenreTmdbResponseDto result = restTemplate.getForObject(genreApiUrl, GenreTmdbResponseDto.class);
+
+        if(result == null || result.getGenres() == null){
+            System.out.println("No data!!");
+        }else{
+            System.out.println("Genres: " + result.getGenres());
+        }
+        return result;
+    }
+
+    public Movie convertToEntityForMovies(MovieCreateDto createDto) {
         Movie movie = new Movie();
         movie.setId(createDto.getId());
         movie.setTitle(createDto.getTitle());
@@ -67,10 +87,20 @@ public class MovieServiceImpl implements MovieService {
         movie.setVote_count(createDto.getVote_count());
         movie.setPopularity(createDto.getPopularity());
         movie.setOriginal_language(createDto.getOriginal_language());
-        movie.setGenre_ids(createDto.getGenre_ids());
+        movie.setGenres(resolveGenres(createDto.getGenre_ids()));
         movie.setAdult(createDto.getAdult());
         movie.setVideo(createDto.getVideo());
         return movie;
+    }
+
+    public List<Genre> resolveGenres(List<Integer> genreIds){
+        List<Genre> genres = new ArrayList<>();
+
+        for(Integer id : genreIds){ // for-each
+            Genre genre = genreRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Genre not found: "+ id));
+            genres.add(genre);
+        }
+        return genres;
     }
 
     public void importMovies(){
@@ -95,7 +125,7 @@ public class MovieServiceImpl implements MovieService {
         }
         else{
             List<Movie> movieEntities = moviesDtos
-                .stream().map(this::convertToEntity)
+                .stream().map(this::convertToEntityForMovies)
                 .collect(Collectors.toList());
 
             movieRepository.saveAll(movieEntities);
