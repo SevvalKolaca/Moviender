@@ -39,10 +39,13 @@ public class Movie {
     Float popularity;
     String original_language;
 
-    @ElementCollection
-    @CollectionTable(name = "movie_genre_ids", joinColumns = @JoinColumn(name = "movie_id"))
-    @Column(name="genre_id")
-    List<Integer> genre_ids;
+    @ManyToMany
+    @JoinTable(
+            name = "movie_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<Genre> genres;
     Boolean adult;
     Boolean video;
 }
