@@ -4,6 +4,7 @@ import com.moviender.moviender.movie.dto.MovieCreateDto;
 import com.moviender.moviender.movie.dto.MovieTmdbResponseDto;
 import com.moviender.moviender.movie.model.Movie;
 import com.moviender.moviender.movie.repository.MovieRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -11,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+@Slf4j
 @Service
 public class MovieServiceImpl implements MovieService {
 
@@ -57,13 +60,22 @@ public class MovieServiceImpl implements MovieService {
     }
 
     public void importMovies(){
+        log.info("Import process started!");
         List<MovieCreateDto> moviesDtos = getMovies().getResponse();
 
-        List<Movie> movieEntities = moviesDtos
+        if(moviesDtos == null || moviesDtos.isEmpty())
+        {
+            log.warn("------- veri yok --------");
+            throw new RuntimeException("No movies to import!!");
+        }
+        else{
+            List<Movie> movieEntities = moviesDtos
                 .stream().map(this::convertToEntity)
                 .collect(Collectors.toList());
 
-        movieRepository.saveAll(movieEntities);
+            movieRepository.saveAll(movieEntities);
+            log.info("Saved movie count: {}", movieEntities.size());
+        }
     }
 
 }
