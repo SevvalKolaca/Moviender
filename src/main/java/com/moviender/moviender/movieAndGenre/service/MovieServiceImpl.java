@@ -1,10 +1,9 @@
-package com.moviender.moviender.movie.service;
+package com.moviender.moviender.movieAndGenre.service;
 
-import com.moviender.moviender.movie.dto.MovieCreateDto;
-import com.moviender.moviender.movie.dto.MovieTmdbResponseDto;
-import com.moviender.moviender.movie.model.Movie;
-import com.moviender.moviender.movie.repository.MovieRepository;
-import jakarta.annotation.PostConstruct;
+import com.moviender.moviender.movieAndGenre.dto.MovieCreateDto;
+import com.moviender.moviender.movieAndGenre.dto.MovieTmdbResponseDto;
+import com.moviender.moviender.movieAndGenre.model.Movie;
+import com.moviender.moviender.movieAndGenre.repository.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,14 +26,14 @@ public class MovieServiceImpl implements MovieService {
 
     @Value("${tmdb.api-key}")
     private String apiKey;
-    private Integer pageNumber = 3;
+    private Integer pageNumber = 50;
 
     // @PostConstruct --> metot çalışıyor mu diye kullandık, uygulama ayağa kalkarken direkt çalışsın diye.
     public void testKey(){
         System.out.println(apiKey);
     }
 
-    @PostConstruct
+    //@PostConstruct --> For testing ;)
     public List<MovieTmdbResponseDto> getMovies(){
         List<MovieTmdbResponseDto> movies = new ArrayList<>();
         System.out.println(apiKey);
@@ -44,10 +43,16 @@ public class MovieServiceImpl implements MovieService {
             MovieTmdbResponseDto result = restTemplate.getForObject(apiUrl, MovieTmdbResponseDto.class);
             System.out.println("Page " + page + ": " + result.getResults().size() + " movies fetched.");
             movies.add(result);
-            //Thread.sleep(1000); // API rate limit'e takılmamak için
+            try {
+                Thread.sleep(1000); // API rate limit'e takılmamak için
+            }catch (InterruptedException e){
+                System.err.println("Sleep interrupted: " + e.getMessage());
+            }
         }
         return movies;
     }
+
+
 
     public Movie convertToEntity(MovieCreateDto createDto) {
         Movie movie = new Movie();
@@ -97,5 +102,7 @@ public class MovieServiceImpl implements MovieService {
             log.info("Saved movie count: {}", movieEntities.size());
         }
     }
+
+
 
 }

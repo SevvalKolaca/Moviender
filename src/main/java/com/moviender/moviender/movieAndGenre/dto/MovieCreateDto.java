@@ -1,6 +1,5 @@
-package com.moviender.moviender.movie.dto;
+package com.moviender.moviender.movieAndGenre.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class MovieResponseDto{
+public class MovieCreateDto{
 
     Integer id;
     String title;

@@ -1,6 +1,6 @@
-package com.moviender.moviender.movie.controller;
+package com.moviender.moviender.movieAndGenre.controller;
 
-import com.moviender.moviender.movie.service.MovieServiceImpl;
+import com.moviender.moviender.movieAndGenre.service.MovieServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,4 +1,4 @@
-package com.moviender.moviender.movie.dto;
+package com.moviender.moviender.movieAndGenre.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
