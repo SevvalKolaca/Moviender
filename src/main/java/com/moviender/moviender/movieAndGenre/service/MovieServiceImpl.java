@@ -1,5 +1,6 @@
 package com.moviender.moviender.movieAndGenre.service;
 
+import com.moviender.moviender.movieAndGenre.dto.GenreDto;
 import com.moviender.moviender.movieAndGenre.dto.GenreTmdbResponseDto;
 import com.moviender.moviender.movieAndGenre.dto.MovieCreateDto;
 import com.moviender.moviender.movieAndGenre.dto.MovieTmdbResponseDto;
@@ -74,24 +75,28 @@ public class MovieServiceImpl implements MovieService {
         return result;
     }
 
-    public Movie convertToEntityForMovies(MovieCreateDto createDto) {
-        Movie movie = new Movie();
-        movie.setId(createDto.getId());
-        movie.setTitle(createDto.getTitle());
-        movie.setOriginal_title(createDto.getOriginal_title());
-        movie.setOverview(createDto.getOverview());
-        movie.setPoster_path(createDto.getPoster_path());
-        movie.setBackdrop_path(createDto.getBackdrop_path());
-        movie.setRelease_date(createDto.getRelease_date());
-        movie.setVote_average(createDto.getVote_average());
-        movie.setVote_count(createDto.getVote_count());
-        movie.setPopularity(createDto.getPopularity());
-        movie.setOriginal_language(createDto.getOriginal_language());
-        movie.setGenres(resolveGenres(createDto.getGenre_ids()));
-        movie.setAdult(createDto.getAdult());
-        movie.setVideo(createDto.getVideo());
-        return movie;
+    public void importGenres(){
+        List<GenreDto> genreDtos = getGenres().getGenres();
+        List<Genre> genres = new ArrayList<>();
+
+        for(GenreDto genreDto:genreDtos){
+            if(genreDto == null) {
+                log.warn("Null genreDto encountered, skipping...");
+                continue;
+            } else
+                genres.add(convertToEntityGenre(genreDto));
+        }
+
+        genreRepository.saveAll(genres);
     }
+
+    public Genre convertToEntityGenre(GenreDto genreDto){
+        Genre genre = new Genre();
+        genre.setGenreName(genreDto.getName());
+        genre.setId(genreDto.getId());
+        return genre;
+    }
+
 
     public List<Genre> resolveGenres(List<Integer> genreIds){
         List<Genre> genres = new ArrayList<>();
@@ -99,6 +104,7 @@ public class MovieServiceImpl implements MovieService {
         for(Integer id : genreIds){ // for-each
             Genre genre = genreRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Genre not found: "+ id));
             genres.add(genre);
+
         }
         return genres;
     }
@@ -133,6 +139,23 @@ public class MovieServiceImpl implements MovieService {
         }
     }
 
-
+    public Movie convertToEntityForMovies(MovieCreateDto createDto) {
+        Movie movie = new Movie();
+        movie.setId(createDto.getId());
+        movie.setTitle(createDto.getTitle());
+        movie.setOriginal_title(createDto.getOriginal_title());
+        movie.setOverview(createDto.getOverview());
+        movie.setPoster_path(createDto.getPoster_path());
+        movie.setBackdrop_path(createDto.getBackdrop_path());
+        movie.setRelease_date(createDto.getRelease_date());
+        movie.setVote_average(createDto.getVote_average());
+        movie.setVote_count(createDto.getVote_count());
+        movie.setPopularity(createDto.getPopularity());
+        movie.setOriginal_language(createDto.getOriginal_language());
+        movie.setGenres(resolveGenres(createDto.getGenre_ids()));
+        movie.setAdult(createDto.getAdult());
+        movie.setVideo(createDto.getVideo());
+        return movie;
+    }
 
 }

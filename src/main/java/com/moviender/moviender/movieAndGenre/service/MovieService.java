@@ -10,4 +10,5 @@ public interface MovieService {
     void importMovies();
 
     GenreTmdbResponseDto getGenres();
+    void importGenres();
 }
