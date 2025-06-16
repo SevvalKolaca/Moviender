@@ -21,8 +21,14 @@ public class Movie {
 
     String title;
     String original_title;
+
+    @Column(columnDefinition = "TEXT") // uzunluk sınırını kaldırmak icin
     String overview;
+
+    @Column(columnDefinition = "TEXT")
     String poster_path;
+
+    @Column(columnDefinition = "TEXT")
     String backdrop_path;
     LocalDate release_date;
     Float vote_average;
