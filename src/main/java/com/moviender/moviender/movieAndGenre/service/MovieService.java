@@ -1,7 +1,10 @@
 package com.moviender.moviender.movieAndGenre.service;
 
+import com.moviender.moviender.movieAndGenre.dto.GenreDto;
 import com.moviender.moviender.movieAndGenre.dto.GenreTmdbResponseDto;
+import com.moviender.moviender.movieAndGenre.dto.MovieResponseDto;
 import com.moviender.moviender.movieAndGenre.dto.MovieTmdbResponseDto;
+import com.moviender.moviender.movieAndGenre.model.Movie;
 
 import java.util.List;
 
@@ -11,4 +14,7 @@ public interface MovieService {
 
     GenreTmdbResponseDto getGenres();
     void importGenres();
+
+    List<MovieResponseDto> getMoviesFromGenres(List<Integer> genreIds);
+
 }

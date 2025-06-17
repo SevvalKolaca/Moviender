@@ -1,9 +1,6 @@
 package com.moviender.moviender.movieAndGenre.service;
 
-import com.moviender.moviender.movieAndGenre.dto.GenreDto;
-import com.moviender.moviender.movieAndGenre.dto.GenreTmdbResponseDto;
-import com.moviender.moviender.movieAndGenre.dto.MovieCreateDto;
-import com.moviender.moviender.movieAndGenre.dto.MovieTmdbResponseDto;
+import com.moviender.moviender.movieAndGenre.dto.*;
 import com.moviender.moviender.movieAndGenre.model.Genre;
 import com.moviender.moviender.movieAndGenre.model.Movie;
 import com.moviender.moviender.movieAndGenre.repository.GenreRepository;
@@ -14,9 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -97,7 +92,6 @@ public class MovieServiceImpl implements MovieService {
         return genre;
     }
 
-
     public List<Genre> resolveGenres(List<Integer> genreIds){
         List<Genre> genres = new ArrayList<>();
 
@@ -108,6 +102,32 @@ public class MovieServiceImpl implements MovieService {
         }
         return genres;
     }
+
+    public List<MovieResponseDto> getMoviesFromGenres(List<Integer> genreIds){
+
+        List<Genre> genres = new ArrayList<>();
+        if(genreIds != null && !genreIds.isEmpty())
+        {
+            for(Integer id: genreIds){
+                genres.add(genreRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Genre Not Found!")));
+            }
+
+            List<MovieResponseDto> moviesDto = movieRepository.findByGenresIn(genres)
+                    .stream()
+                    .map(this::convertToDtoForMovies)
+                    .collect(Collectors.toList());
+
+            System.out.println("Movie list size:"+moviesDto.size());
+            Collections.shuffle(moviesDto); // for random list of movies
+            return moviesDto;
+        }else
+        {
+            log.warn("List of Genre id's list is null or empty!!!");
+            return new ArrayList<>();
+        }
+    }
+
 
     public void importMovies(){
         log.info("Import process started!");
@@ -139,7 +159,29 @@ public class MovieServiceImpl implements MovieService {
         }
     }
 
-    public Movie convertToEntityForMovies(MovieCreateDto createDto) {
+    private MovieResponseDto convertToDtoForMovies(Movie movie){
+        MovieResponseDto dto = new MovieResponseDto();
+        dto.setId(movie.getId());
+        dto.setTitle(movie.getTitle());
+        dto.setOriginal_title(movie.getOriginal_title());
+        dto.setOverview(movie.getOverview());
+        dto.setPoster_path(movie.getPoster_path());
+        dto.setBackdrop_path(movie.getBackdrop_path());
+        dto.setRelease_date(movie.getRelease_date());
+        dto.setVote_average(movie.getVote_average());
+        dto.setVote_count(movie.getVote_count());
+        dto.setPopularity(movie.getPopularity());
+        dto.setOriginal_language(movie.getOriginal_language());
+        dto.setGenre_ids(movie.getGenres()
+                .stream().map(Genre::getId)
+                .collect(Collectors.toList()));
+        dto.setAdult(movie.getAdult());
+        dto.setVideo(movie.getVideo());
+
+        return dto;
+    }
+
+    private Movie convertToEntityForMovies(MovieCreateDto createDto) {
         Movie movie = new Movie();
         movie.setId(createDto.getId());
         movie.setTitle(createDto.getTitle());
