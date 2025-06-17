@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 
 public class MovieResponseDto{
-    
+
     Integer id;
     String title;
     String original_title;
