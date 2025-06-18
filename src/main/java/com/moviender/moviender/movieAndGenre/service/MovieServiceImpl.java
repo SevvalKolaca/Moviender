@@ -159,6 +159,16 @@ public class MovieServiceImpl implements MovieService {
         }
     }
 
+    public List<String> getGenreNamesByIds(List<Integer> genreIds){
+        List<String> genreNames = genreRepository.findGenreNamesByIds(genreIds);
+        return genreNames;
+        //        List<Genre> genres = genreRepository.findAllById(genreIds);
+//
+//        return genres.stream()
+//                .map(Genre::getGenreName)
+//                .collect(Collectors.toList());
+    }
+
     private MovieResponseDto convertToDtoForMovies(Movie movie){
         MovieResponseDto dto = new MovieResponseDto();
         dto.setId(movie.getId());

@@ -17,4 +17,5 @@ public interface MovieService {
 
     List<MovieResponseDto> getMoviesFromGenres(List<Integer> genreIds);
 
+    List<String> getGenreNamesByIds(List<Integer> genreIds);
 }
